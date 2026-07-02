@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfil Profesional – Luixany Velasquez</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<style>
+  :root {
+    --accent:       #E87722;
+    --accent-light: #FEF0E6;
+    --accent-dim:   #f5a05a;
+    --bg:           #F4F4F4;
+    --surface:      #FFFFFF;
+    --border:       #E2E2E2;
+    --g100: #F8F8F8;
+    --g200: #EEEEEE;
+    --g300: #D8D8D8;
+    --g400: #AAAAAA;
+    --g500: #888888;
+    --g600: #666666;
+    --g700: #444444;
+    --g800: #222222;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--g800);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 28px 18px 48px; }
+
+  /* ── HEADER ── */
+  .hdr {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 22px 28px;
+    margin-bottom: 22px;
+    border-left: 5px solid var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .hdr-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .hdr h1 { font-size: 19px; font-weight: 700; color: var(--g800); letter-spacing: -.3px; }
+  .hdr p  { font-size: 12px; color: var(--g500); margin-top: 3px; }
+
+  /* ── SECTION LABEL ── */
+  .sec-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    color: var(--accent);
+    margin: 20px 0 10px;
+  }
+  .sec-label .hint {
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 11px;
+    color: var(--g500);
+  }
+
+  /* ── KPI CARDS ── */
+  .kpi-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 4px; }
+  .kpi {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 20px 18px 16px;
+    border-top: 3px solid var(--border);
+    transition: border-top-color .2s, box-shadow .2s;
+    cursor: default;
+  }
+  .kpi:hover { border-top-color: var(--accent); box-shadow: 0 3px 14px rgba(232,119,34,.13); }
+  .kpi-val { font-size: 34px; font-weight: 800; color: var(--accent); line-height: 1; }
+  .kpi-lbl { font-size: 12px; font-weight: 600; color: var(--g600); margin-top: 7px; }
+  .kpi-sub { font-size: 11px; color: var(--g400); margin-top: 3px; }
+
+  /* ── CHART BLOCK ── */
+  .cblock {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 18px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .chart-col { flex: 0 0 300px; position: relative; }
+  .chart-col canvas { display: block; }
+  .panel-col {
+    flex: 1;
+    min-height: 290px;
+    background: var(--g100);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── PANEL PLACEHOLDER ── */
+  .panel-ph {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-light);
+    border-radius: 6px;
+    border: 1.5px dashed var(--accent-dim);
+    padding: 24px 20px;
+    text-align: center;
+    gap: 10px;
+  }
+  .panel-ph-arrow { font-size: 24px; color: var(--accent); }
+  .panel-ph-text {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1.5;
+  }
+
+  /* panel content */
+  .info-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--g800);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 20px;
+    background: var(--accent-light);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .info-row { margin-bottom: 9px; }
+  .info-lbl {
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--g400);
+    margin-bottom: 2px;
+  }
+  .info-val { font-size: 12px; color: var(--g600); line-height: 1.4; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+  .tag {
+    font-size: 10.5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--g200);
+    color: var(--g600);
+  }
+  .items-list { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
+  .item-pill {
+    font-size: 11.5px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    background: var(--g200);
+    color: var(--g700);
+    line-height: 1.3;
+  }
+  .prog-bar { height: 5px; background: var(--g200); border-radius: 3px; margin-top: 6px; overflow: hidden; }
+  .prog-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width .5s ease; }
+
+  /* ── BAR CHART BLOCK ── */
+  .bblock {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 18px;
+  }
+  .bar-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--g200);
+    justify-content: center;
+  }
+  .bar-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11.5px;
+    color: var(--g600);
+  }
+  .bar-legend-dot {
+    width: 13px; height: 13px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* ── SKILLS BAR ── */
+  .skills-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: var(--g100);
+    border-radius: 7px;
+    border: 1px solid var(--g200);
+  }
+  .skills-bar span {
+    font-size: 12px;
+    color: var(--g600);
+    padding: 3px 11px;
+    border-right: 1px solid var(--g300);
+    line-height: 1.9;
+    white-space: nowrap;
+  }
+  .skills-bar span:last-child { border-right: none; }
+
+  @media(max-width:680px){
+    .kpi-row { grid-template-columns: 1fr; }
+    .cblock  { flex-direction: column; }
+    .chart-col { flex: none; width: 100%; }
+    .panel-col { min-height: 200px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-dot"></div>
+    <div>
+      <h1>Luixany Velasquez Veitía</h1>
+      <p>Project Manager IT &nbsp;·&nbsp; Consultora de Implantación de Soluciones Tecnológicas &nbsp;·&nbsp; SCRUM / Agile &nbsp;·&nbsp; Valencia, España</p>
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="sec-label">Resumen del Perfil</div>
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-val">18+</div>
+      <div class="kpi-lbl">Años de experiencia</div>
+      <div class="kpi-sub">Telecom · IT · Energía · Salud · EdTech</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">&gt;90%</div>
+      <div class="kpi-lbl">Tasa media de éxito en proyectos</div>
+      <div class="kpi-sub">Historial consistente en más de 12 proyectos liderados</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">PSM I · PSPO I</div>
+      <div class="kpi-lbl">Certificaciones Scrum.org + ITIL</div>
+      <div class="kpi-sub">Inglés B2 · Disponibilidad remota / híbrida</div>
+    </div>
+  </div>
+
+  <!-- PRESENTACIÓN -->
+  <div class="sec-label" style="margin-top:22px;">Presentación</div>
+  <div style="background:#fff;border-radius:10px;padding:20px 24px;margin-bottom:18px;border-left:4px solid var(--accent);">
+    <p style="font-size:13.5px;color:#444;line-height:1.75;font-family:'Segoe UI',system-ui,sans-serif;text-align:justify;">
+      Ingeniera en Telecomunicaciones con más de 18 años liderando proyectos de transformación digital de extremo a extremo, con experiencia tanto en empresa cliente como en consultoría IT. Orientada a resultados concretos y medibles, combina visión técnica y estratégica para gestionar implantaciones complejas desde el análisis hasta la adopción.
+    </p>
+    <div class="skills-bar">
+      <span>PM IT</span>
+      <span>Transformación Digital</span>
+      <span>IAM &amp; Seguridad</span>
+      <span>Cloud / Azure</span>
+      <span>Atlassian / Jira</span>
+      <span>Power BI</span>
+      <span>Scrum · ITIL</span>
+      <span>Gestión E2E</span>
+      <span>Stakeholders</span>
+      <span>Equipos Remotos</span>
+      <span>PSM I · PSPO I</span>
+      <span>18+ años</span>
+    </div>
+  </div>
+
+  <!-- PROJECTS CHART -->
+  <div class="sec-label">Proyectos Realizados <span class="hint">— haz clic en un sector para ver el detalle</span></div>
+  <div class="cblock">
+    <div class="chart-col">
+      <canvas id="cProj" height="300"></canvas>
+    </div>
+    <div class="panel-col" id="panelProj">
+      <div class="panel-ph" id="phProj">
+        <div class="panel-ph-arrow">◀</div>
+        <div class="panel-ph-text">Haz clic en un sector del gráfico<br>para ver el detalle del proyecto</div>
+      </div>
+      <div id="ctProj" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- TECH CHART -->
+  <div class="sec-label">Competencias Técnicas <span class="hint">— haz clic en un área para ver las herramientas</span></div>
+  <div class="cblock">
+    <div class="chart-col">
+      <canvas id="cTech" height="300"></canvas>
+    </div>
+    <div class="panel-col" id="panelTech">
+      <div class="panel-ph" id="phTech">
+        <div class="panel-ph-arrow">◀</div>
+        <div class="panel-ph-text">Selecciona un área técnica<br>para ver las herramientas y tecnologías</div>
+      </div>
+      <div id="ctTech" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- OTHER CHART -->
+  <div class="sec-label">Certificaciones y Competencias <span class="hint">— haz clic en una categoría para ver el detalle</span></div>
+  <div class="cblock">
+    <div class="chart-col">
+      <canvas id="cOther" height="300"></canvas>
+    </div>
+    <div class="panel-col" id="panelOther">
+      <div class="panel-ph" id="phOther">
+        <div class="panel-ph-arrow">◀</div>
+        <div class="panel-ph-text">Selecciona una categoría<br>para ver el detalle completo</div>
+      </div>
+      <div id="ctOther" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- BAR CHART -->
+  <div class="sec-label">Proyectos Clave — Resultados</div>
+  <div class="bblock">
+    <div style="position:relative;height:460px;">
+      <canvas id="cBar"></canvas>
+    </div>
+    <div class="bar-legend" id="barLegend"></div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+/* ── REGISTER DATALABELS PLUGIN ── */
+Chart.register(ChartDataLabels);
+
+/* ── PALETTE — tonos cálidos profesionales, sin grises ── */
+const PALETTE = [
+  '#E87722',  // Naranja principal
+  '#F5A347',  // Naranja claro
+  '#C47020',  // Ámbar oscuro
+  '#D4604A',  // Terracota / Coral
+  '#2E8B8B',  // Teal / Verde azulado
+  '#4A7CA8',  // Azul acero
+  '#7B5EA7',  // Morado suave
+  '#5E8B6B',  // Verde salvia
+  '#C4A030',  // Oro cálido
+  '#8B5B4A',  // Marrón cálido
+];
+
+/* ── COMPANY COLORS ── */
+const CO_COLORS = {
+  'Inlogiq-Devoteam':   '#4A7CA8',
+  'Grupo Colisée':      '#E87722',
+  'Arquibérica España': '#5E8B6B',
+  'Grupo UELLA':        '#7B5EA7',
+  'Movilnet Venezuela': '#C4A030'
+};
+
+/* ── DATA ── */
+const PROJECTS = [
+  {
+    name:'Migración Cloud Atlassian',
+    short:'Cloud Atlassian',
+    company:'Inlogiq-Devoteam',
+    sector:'Consultoría IT',
+    success:70,
+    resp:'Migración a la nube de Jira, JSM, Confluence y Bitbucket para clientes públicos y privados. Gestión de procesos de licitación pública.',
+    logros:'70% de objetivos en fase inicial del programa. Onboarding multicliente gestionado.',
+    tech:['Jira','Jira Service Management','Confluence','Bitbucket','Atlassian Cloud'],
+    metod:'Cloud Migration · ITIL · SLA Management'
+  },
+  {
+    name:'Implantación JSM — Customer Service',
+    short:'JSM Customer Service',
+    company:'Inlogiq-Devoteam',
+    sector:'Consultoría IT',
+    success:98,
+    resp:'Implementación de Jira Service Management para la gestión de incidencias de clientes externos y cumplimiento de SLA.',
+    logros:'98% de cumplimiento de objetivos. Reducción de tiempos de respuesta y mejora de satisfacción de clientes.',
+    tech:['Jira Service Management','Atlassian Cloud','ITIL'],
+    metod:'ITIL · SLA Management · SCRUM'
+  },
+  {
+    name:'Integración Power BI + Jira (KPI)',
+    short:'Power BI + Jira KPIs',
+    company:'Inlogiq-Devoteam',
+    sector:'Consultoría IT',
+    success:70,
+    resp:'Integración de Microsoft Power BI con Jira para generación de indicadores KPI de gestión y reporting ejecutivo.',
+    logros:'70% de objetivos. Dashboards de KPIs operativos. Visibilidad de métricas en tiempo real para clientes.',
+    tech:['Microsoft Power BI','Jira','Atlassian Cloud'],
+    metod:'Business Intelligence · Data Analytics'
+  },
+  {
+    name:'Intranet SharePoint Corporativa',
+    short:'SharePoint Intranet',
+    company:'Grupo Colisée',
+    sector:'Servicios Asistenciales',
+    success:90,
+    resp:'Implantación de Microsoft SharePoint como intranet corporativa para +60 centros. Migración de repositorios e integración con Active Directory y SAGE.',
+    logros:'90% de objetivos. Red conectada en España e Italia. Digitalización documental completada.',
+    tech:['Microsoft SharePoint','Microsoft Active Directory','SAGE ERP'],
+    metod:'Project Management · Change Management · UAT'
+  },
+  {
+    name:'Sistema IAM Multi-plataforma',
+    short:'IAM Multi-plataforma',
+    company:'Grupo Colisée',
+    sector:'Servicios Asistenciales',
+    success:95,
+    resp:'Implementación de Gestión de Identidades y Accesos (IAM) en múltiples plataformas. Automatización del ciclo de vida de usuarios.',
+    logros:'95% de objetivos. Automatización completa del provisionamiento de cuentas.',
+    tech:['Active Directory','Azure AD','PowerShell','SharePoint'],
+    metod:'IAM · Security Management · Automation'
+  },
+  {
+    name:'App Móvil — Residentes y Familias',
+    short:'App Móvil Residentes',
+    company:'Grupo Colisée',
+    sector:'Servicios Asistenciales',
+    success:90,
+    resp:'Liderazgo del desarrollo e implantación de app móvil corporativa para residentes y familias, integrada con ResiPlus via API y vistas SQL.',
+    logros:'90% de objetivos y alta satisfacción de usuarios finales.',
+    tech:['ResiPlus','API REST','SQL','Azure'],
+    metod:'Project Management · UAT · Integración API'
+  },
+  {
+    name:'Docuware ECM — Digitalización',
+    short:'Docuware ECM',
+    company:'Grupo Colisée',
+    sector:'Servicios Asistenciales',
+    success:75,
+    resp:'Implantación de Docuware integrado con SAGE para digitalización de flujos de aprobación y automatización de procesos documentales.',
+    logros:'75% de objetivos. Procesos de aprobación digitalizados. Reducción de papel.',
+    tech:['Docuware','SAGE ERP','SQL','PowerShell'],
+    metod:'ECM · BPM · Gestión Documental'
+  },
+  {
+    name:'Smart Energy — Iberdrola',
+    short:'Smart Energy Iberdrola',
+    company:'Arquibérica España',
+    sector:'Energía / Ingeniería',
+    success:85,
+    resp:'Diseño e implantación del proceso de certificación de eficiencia energética y gestión documental para subvenciones públicas. Digitalización en Jira y capacitación de personal.',
+    logros:'Proceso certificado y digitalizado. 100% del personal técnico capacitado.',
+    tech:['Jira','Microsoft Project','WordPress'],
+    metod:'SCRUM (Product Owner) · KPIs · Gestión Riesgos'
+  },
+  {
+    name:'Migración HLR Suscriptores',
+    short:'Migración HLR',
+    company:'Movilnet Venezuela',
+    sector:'Telecomunicaciones',
+    success:98,
+    resp:'Migración total de la base de datos de suscriptores desde múltiples HLR a plataforma HLR modular centralizada. Coordinación con proveedor Alcatel-Lucent.',
+    logros:'98% de cumplimiento de objetivos. Migración completada sin afectación del servicio ni pérdida de datos.',
+    tech:['HLR','SS7','MAP','SIP','Unix','SQL'],
+    metod:'ATP · Change Management · Risk Management'
+  },
+  {
+    name:'Plataforma LMS + E-commerce',
+    short:'LMS EdTech UELLA',
+    company:'Grupo UELLA',
+    sector:'EdTech / Educación',
+    success:80,
+    resp:'Diseño, gestión y coordinación de un ecosistema educativo con LMS, componentes síncronos/asíncronos y e-commerce. Equipo de 27 personas.',
+    logros:'Plataforma lanzada años antes de la masificación del e-learning. Alta valoración de contenido.',
+    tech:['Moodle LMS','WordPress','MySQL','JavaScript','Unix'],
+    metod:'Gestión de Producto · Marketing Digital · Ops'
+  }
+];
+
+const TECH = [
+  { name:'PM & Metodologías', count:7, items:['SCRUM (PO / Scrum Master)','Kanban','ITIL','PMO','Gestión de Riesgos','Gestión de Stakeholders','LEAN'] },
+  { name:'Herramientas de Gestión', count:8, items:['Jira','Jira Service Management','Confluence','Bitbucket','MS Project','Asana','Trello','Figma'] },
+  { name:'ERP & Sistemas', count:4, items:['SAGE ERP','ResiPlus','QBED','Denario'] },
+  { name:'Plataformas Microsoft', count:5, items:['SharePoint','Azure (VDI + Cloud Migration)','Active Directory','Power BI','Office Avanzado'] },
+  { name:'BI & Datos', count:3, items:['Microsoft Power BI','Qlik Sense','SQL'] },
+  { name:'Documental & Automatización', count:2, items:['Docuware (ECM / GD / BPM)','IAM — Gestión de Identidades y Accesos'] },
+  { name:'Desarrollo & Sistemas', count:7, items:['WordPress','JavaScript','PowerShell','Moodle LMS','MySQL','Oracle','Unix / Linux'] },
+  { name:'Telecomunicaciones Core', count:9, items:['SS7 / ISUP / ANSI','MAP / TCAP / SCCP / MTP','RANAP / BICC','H.248 / SIP / TCP-IP','HLR / EIR / STP / HSS','GSM / CDMA','IVR','Unix','Core Network Móvil'] }
+];
+
+const OTHER = [
+  { name:'Certificaciones', count:5, items:[
+    'Professional Scrum Master I (PSM I) — Scrum.org',
+    'Professional Scrum Product Owner I (PSPO I) — Scrum.org',
+    'Fundamentos Jira y JSM — Devoteam (20 h)',
+    'ITIL Foundation — Devoteam (16 h)',
+    'Inteligencia Artificial Generativa — Devoteam (20 h)'
+  ]},
+  { name:'Competencias Funcionales', count:6, items:[
+    'Consultoría de Implantación de Soluciones TI',
+    'Análisis de Requerimientos y Procesos de Negocio',
+    'Gestión de Stakeholders y Relación con Clientes',
+    'Gestión de Proveedores y Negociación de Contratos',
+    'Diseño de Procesos y Documentación Técnica',
+    'Gestión de Calidad y Cumplimiento de SLA'
+  ]},
+  { name:'Competencias de Gestión', count:6, items:[
+    'Gestión de Proyectos End-to-End (E2E)',
+    'Gestión de Presupuestos, Costes y Márgenes',
+    'Gestión de Riesgos y Planes de Mitigación',
+    'Liderazgo de Equipos Técnicos y Multidisciplinares',
+    'Planificación y Control de Cronogramas',
+    'Gestión del Cambio y Adopción Tecnológica'
+  ]},
+  { name:'Competencias Personales', count:7, items:[
+    'Orientación al Logro y a Resultados',
+    'Comunicación Efectiva y Escucha Activa',
+    'Flexibilidad Cognitiva y Aprendizaje Continuo',
+    'Liderazgo y Trabajo en Equipo',
+    'Capacidad Resolutiva y Orientación al Cliente',
+    'Organización, Planificación y Atención al Detalle',
+    'Adaptabilidad al Cambio'
+  ]},
+  { name:'Idiomas', count:2, items:['Español — Nativo','Inglés — B2 (Intermedio-Alto)'] }
+];
+
+/* ── HELPERS ── */
+function mixPalette(n){
+  return Array.from({length:n}, (_,i) => PALETTE[i % PALETTE.length]);
+}
+
+function makeChart(id, labels, values, colors){
+  return new Chart(document.getElementById(id).getContext('2d'),{
+    type:'doughnut',
+    data:{
+      labels,
+      datasets:[{
+        data: values,
+        backgroundColor: colors,
+        borderColor:'#fff',
+        borderWidth:2,
+        hoverOffset:10
+      }]
+    },
+    options:{
+      responsive:true,
+      cutout:'52%',
+      plugins:{
+        legend:{
+          position:'bottom',
+          labels:{
+            font:{size:10.5, family:'Segoe UI,system-ui,sans-serif'},
+            color:'#666',
+            padding:10,
+            boxWidth:11,
+            boxHeight:11
+          }
+        },
+        tooltip:{ callbacks:{ label: ctx=>' '+ctx.label } },
+        datalabels:{ display:false }
+      },
+      onHover:(e,els)=>{ e.native.target.style.cursor = els.length?'pointer':'default'; }
+    }
+  });
+}
+
+/* ── CHARTS ── */
+const cProj  = makeChart('cProj',  PROJECTS.map(p=>p.short), PROJECTS.map(()=>1), mixPalette(PROJECTS.length));
+const cTech  = makeChart('cTech',  TECH.map(t=>t.name),  TECH.map(t=>t.count),  mixPalette(TECH.length));
+const cOther = makeChart('cOther', OTHER.map(o=>o.name), OTHER.map(o=>o.count), mixPalette(OTHER.length));
+
+/* ── CLICK HANDLERS ── */
+function showPanel(phId, ctId, html){
+  document.getElementById(phId).style.display='none';
+  const ct=document.getElementById(ctId);
+  ct.style.display='block';
+  ct.innerHTML=html;
+}
+
+document.getElementById('cProj').onclick = e=>{
+  const els = cProj.getElementsAtEventForMode(e,'nearest',{intersect:true},false);
+  if(!els.length) return;
+  const p = PROJECTS[els[0].index];
+  const pct = Math.min(p.success,100);
+  showPanel('phProj','ctProj',`
+    <div class="info-title">
+      ${p.name}
+      <span class="badge">${p.success>=100?'▲ ':''}${p.success}%</span>
+    </div>
+    <div class="info-row">
+      <div class="info-lbl">Empresa · Sector</div>
+      <div class="info-val">${p.company} &nbsp;·&nbsp; ${p.sector}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-lbl">Responsabilidades</div>
+      <div class="info-val">${p.resp}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-lbl">Logros</div>
+      <div class="info-val">${p.logros}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-lbl">Tecnologías</div>
+      <div class="tags">${p.tech.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-lbl">Metodología</div>
+      <div class="info-val">${p.metod}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-lbl">Cumplimiento de objetivos</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+    </div>
+  `);
+};
+
+document.getElementById('cTech').onclick = e=>{
+  const els = cTech.getElementsAtEventForMode(e,'nearest',{intersect:true},false);
+  if(!els.length) return;
+  const c = TECH[els[0].index];
+  showPanel('phTech','ctTech',`
+    <div class="info-title">
+      ${c.name}
+      <span class="badge">${c.count} herramientas</span>
+    </div>
+    <div class="info-row">
+      <div class="info-lbl">Herramientas y tecnologías</div>
+      <div class="tags">${c.items.map(i=>`<span class="tag">${i}</span>`).join('')}</div>
+    </div>
+  `);
+};
+
+document.getElementById('cOther').onclick = e=>{
+  const els = cOther.getElementsAtEventForMode(e,'nearest',{intersect:true},false);
+  if(!els.length) return;
+  const o = OTHER[els[0].index];
+  showPanel('phOther','ctOther',`
+    <div class="info-title">
+      ${o.name}
+      <span class="badge">${o.count} elementos</span>
+    </div>
+    <div class="info-row">
+      <div class="items-list">${o.items.map(i=>`<div class="item-pill">${i}</div>`).join('')}</div>
+    </div>
+  `);
+};
+
+/* ── BAR CHART DATA ── */
+const BAR_DATA = [
+  {title:'Implantación JSM — Customer Service',  co:'Inlogiq-Devoteam',   sector:'Consultoría IT',          s:98},
+  {title:'Jira Gestión Incidencias Interna',      co:'Grupo Colisée',      sector:'Servicios Asistenciales',  s:98},
+  {title:'Migración HLR Suscriptores',            co:'Movilnet Venezuela',  sector:'Telecomunicaciones',      s:98},
+  {title:'Sistema IAM Multi-plataforma',          co:'Grupo Colisée',      sector:'Servicios Asistenciales',  s:95},
+  {title:'Intranet SharePoint Corporativa',       co:'Grupo Colisée',      sector:'Servicios Asistenciales',  s:90},
+  {title:'App Móvil Residentes y Familias',       co:'Grupo Colisée',      sector:'Servicios Asistenciales',  s:90},
+  {title:'Smart Energy — Iberdrola',              co:'Arquibérica España',  sector:'Energía / Ingeniería',    s:85},
+  {title:'Plataforma LMS + E-commerce',           co:'Grupo UELLA',         sector:'EdTech / Educación',      s:80},
+  {title:'Docuware ECM — Digitalización',         co:'Grupo Colisée',      sector:'Servicios Asistenciales',  s:75},
+  {title:'Migración Cloud Atlassian',             co:'Inlogiq-Devoteam',   sector:'Consultoría IT',          s:70},
+  {title:'Integración Power BI + Jira',           co:'Inlogiq-Devoteam',   sector:'Consultoría IT',          s:70},
+];
+
+const cBar = new Chart(document.getElementById('cBar').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: BAR_DATA.map(r => r.title),
+    datasets: [{
+      data: BAR_DATA.map(r => r.s),
+      backgroundColor: BAR_DATA.map(r => CO_COLORS[r.co] || '#E87722'),
+      borderRadius: 4,
+      barPercentage: 0.72,
+      categoryPercentage: 0.85
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { right: 48 } },
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        align: 'center',
+        anchor: 'center',
+        color: 'rgba(255,255,255,0.95)',
+        font: { size: 10, weight: '700', family: 'Segoe UI, system-ui, sans-serif' },
+        formatter: (_value, ctx) => BAR_DATA[ctx.dataIndex].sector
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.raw}%  ·  ${BAR_DATA[ctx.dataIndex].co}`
+        }
+      }
+    },
+    scales: {
+      x: {
+        min: 0,
+        max: 100,
+        ticks: {
+          callback: v => v + '%',
+          font: { size: 10.5 },
+          color: '#999'
+        },
+        grid: { color: 'rgba(0,0,0,0.05)' },
+        title: {
+          display: true,
+          text: '% Cumplimiento de Objetivos',
+          font: { size: 11, weight: '600' },
+          color: '#888',
+          padding: { top: 8 }
+        }
+      },
+      y: {
+        ticks: {
+          font: { size: 10.5 },
+          color: '#555'
+        },
+        grid: { display: false }
+      }
+    }
+  }
+});
+
+/* ── COMPANY LEGEND ── */
+const legendEl = document.getElementById('barLegend');
+Object.entries(CO_COLORS).forEach(([name, color]) => {
+  const item = document.createElement('div');
+  item.className = 'bar-legend-item';
+  item.innerHTML = `<div class="bar-legend-dot" style="background:${color}"></div><span>${name}</span>`;
+  legendEl.appendChild(item);
+});
+</script>
+</body>
+</html>
